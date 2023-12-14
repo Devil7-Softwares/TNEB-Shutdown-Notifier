@@ -1,0 +1,37 @@
+﻿using System.Text.Json.Serialization;
+
+namespace TNEB.Shutdown.Scrapper
+{
+    public class Circle
+    {
+        /// <summary>
+        /// Circle ID from TNEB
+        /// </summary>
+        /// <example>
+        /// "0402"
+        /// </example>
+        [JsonPropertyName("value")]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// Circle Name from TNEB
+        /// </summary>
+        /// <example>
+        /// "CHENNAI - CENTRAL"
+        /// </example>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        public Circle(string name, string value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public Circle()
+        {
+            Name = string.Empty;
+            Value = string.Empty;
+        }
+    }
+}

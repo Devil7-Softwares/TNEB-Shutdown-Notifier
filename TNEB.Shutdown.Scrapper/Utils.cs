@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System.Globalization;
+using System.Reflection;
 
 namespace TNEB.Shutdown.Scrapper
 {
@@ -51,7 +52,9 @@ namespace TNEB.Shutdown.Scrapper
 
         public static string ResolveCaptcha(byte[] imageBuffer)
         {
-            using (Tesseract.TesseractEngine engine = new Tesseract.TesseractEngine("./data", "eng", Tesseract.EngineMode.Default))
+            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+
+            using (Tesseract.TesseractEngine engine = new Tesseract.TesseractEngine(Path.Combine(assemblyPath, "data"), "eng", Tesseract.EngineMode.Default))
             {
                 using (Tesseract.Pix pix = Tesseract.Pix.LoadFromMemory(imageBuffer))
                 {

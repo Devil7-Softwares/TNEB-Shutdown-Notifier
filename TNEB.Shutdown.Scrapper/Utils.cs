@@ -74,8 +74,6 @@ namespace TNEB.Shutdown.Scrapper
 
             await stream.CopyToAsync(memoryStream);
 
-            File.WriteAllBytes("Captcha.jpg", memoryStream.ToArray());
-
             return ResolveCaptcha(memoryStream.ToArray());
         }
 

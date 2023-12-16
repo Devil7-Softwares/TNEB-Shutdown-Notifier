@@ -281,24 +281,34 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
             IScheduler scheduler = schedulerFactory.GetScheduler().Result;
 
             IJobDetail circleScrapperJob = JobBuilder.Create<CircleScrapperJob>().WithIdentity("CircleScrapperJob", "Scrapper").Build();
-            ITrigger circleScrapperTrigger = TriggerBuilder.Create()
-                .WithIdentity("CircleScrapperTrigger", "Scrapper")
-                .StartNow()
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInHours(24)
-                    .RepeatForever()
-                ).Build();
-            scheduler.ScheduleJob(circleScrapperJob, circleScrapperTrigger).Wait();
+
+            if (!scheduler.CheckExists(circleScrapperJob.Key).Result)
+            {
+                ITrigger circleScrapperTrigger = TriggerBuilder.Create()
+                    .WithIdentity("CircleScrapperTrigger", "Scrapper")
+                    .StartNow()
+                    .WithSimpleSchedule(x => x
+                        .WithIntervalInHours(24)
+                        .RepeatForever()
+                    ).Build();
+
+                scheduler.ScheduleJob(circleScrapperJob, circleScrapperTrigger).Wait();
+            }
 
             IJobDetail scheduleScrapperJob = JobBuilder.Create<ScheduleScrapperJob>().WithIdentity("ScheduleScrapperJob", "Scrapper").Build();
-            ITrigger scheduleScrapperTrigger = TriggerBuilder.Create()
+
+            if (!scheduler.CheckExists(scheduleScrapperJob.Key).Result)
+            {
+                ITrigger scheduleScrapperTrigger = TriggerBuilder.Create()
                 .WithIdentity("ScheduleScrapperTrigger", "Scrapper")
                 .StartNow()
                 .WithSimpleSchedule(x => x
                     .WithIntervalInHours(1)
                     .RepeatForever()
                 ).Build();
-            scheduler.ScheduleJob(scheduleScrapperJob, scheduleScrapperTrigger).Wait();
+
+                scheduler.ScheduleJob(scheduleScrapperJob, scheduleScrapperTrigger).Wait();
+            }
         }
     }
 }

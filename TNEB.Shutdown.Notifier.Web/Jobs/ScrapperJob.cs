@@ -10,6 +10,8 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
         private readonly ILogger<ScheduleScrapperJob> logger;
         private readonly AppDbContext dbContext;
 
+        private Location[]? locations;
+
         public ScheduleScrapperJob(ILogger<ScheduleScrapperJob> logger, AppDbContext dbContext)
         {
             this.logger = logger;
@@ -18,7 +20,14 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
         private async Task<Location> GetLocation(string locationName)
         {
-            Location? location = dbContext.Locations.FirstOrDefault(l => l.Name == locationName);
+            if (locations == null)
+            {
+                logger.LogDebug("Fetching locations...");
+                locations = dbContext.Locations.ToArray();
+                logger.LogInformation($"{locations.Length} Locations fetched!");
+            }
+
+            Location? location = locations.FirstOrDefault(l => l.Name == locationName);
 
             if (location == null)
             {

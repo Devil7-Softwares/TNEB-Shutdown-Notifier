@@ -2,7 +2,19 @@
 
 namespace TNEB.Shutdown.Scrapper
 {
-    public class Schedule
+    public interface ISchedule
+    {
+        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset From { get; set; }
+        public DateTimeOffset To { get; set; }
+        public string Town { get; set; }
+        public string SubStation { get; set; }
+        public string Feeder { get; set; }
+        public string Location { get; set; }
+        public string TypeOfWork { get; set; }
+    }
+
+    public class Schedule : ISchedule
     {
         /// <summary>
         /// The date of outage.

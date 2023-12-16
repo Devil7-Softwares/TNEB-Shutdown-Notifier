@@ -2,7 +2,13 @@
 
 namespace TNEB.Shutdown.Scrapper
 {
-    public class Circle
+    public interface ICircle
+    {
+        public string Value { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class Circle : ICircle
     {
         /// <summary>
         /// Circle ID from TNEB

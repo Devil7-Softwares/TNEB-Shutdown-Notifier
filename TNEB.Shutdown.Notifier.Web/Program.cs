@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Quartz;
+using TNEB.Shutdown.Notifier.Web.Data;
 using TNEB.Shutdown.Notifier.Web.Jobs;
 
 namespace TNEB.Shutdown.Notifier.Web
@@ -17,6 +19,11 @@ namespace TNEB.Shutdown.Notifier.Web
             builder.Services.AddQuartzHostedService(options =>
             {
                 options.WaitForJobsToComplete = true;
+            });
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             var app = builder.Build();

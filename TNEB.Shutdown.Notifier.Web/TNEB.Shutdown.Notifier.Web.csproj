@@ -16,9 +16,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Quartz" Version="3.8.0" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.0" />
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" />
+    <PackageReference Include="Quartz.Serialization.Json" Version="3.8.0" />
   </ItemGroup>
 
   <ItemGroup>

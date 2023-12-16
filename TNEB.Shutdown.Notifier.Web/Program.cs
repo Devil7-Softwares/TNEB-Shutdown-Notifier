@@ -14,7 +14,21 @@ namespace TNEB.Shutdown.Notifier.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddQuartz();
+            builder.Services.AddQuartz(q =>
+            {
+                string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    q.UsePersistentStore(s =>
+                    {
+                        s.UseNewtonsoftJsonSerializer();
+                        s.UseProperties = true;
+                        s.RetryInterval = TimeSpan.FromSeconds(15);
+                        s.UseSqlServer(connectionString);
+                    });
+                }
+            });
 
             builder.Services.AddQuartzHostedService(options =>
             {

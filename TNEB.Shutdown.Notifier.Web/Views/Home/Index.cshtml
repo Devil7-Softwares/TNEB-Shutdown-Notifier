@@ -1,7 +1,18 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div>
     <h1>Welcome</h1>
+    <form method="post">
+        <label for="circle">Circle</label>
+        <select id="circle" name="circleId">
+            @foreach (var circle in Model.Circles)
+            {
+                <option value="@circle.Id">@circle.Name</option>
+            }
+        </select>
+        <button type="submit">Submit</button>
+    </form>
 </div>

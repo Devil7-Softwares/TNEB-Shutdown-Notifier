@@ -1,0 +1,63 @@
+﻿@model ScheduleViewModel
+@{
+    ViewData["Title"] = $"View Schedule for {Model.Circle.Name}";
+}
+
+<h1>View Schedule</h1>
+<div>
+
+    <form method="post">
+        <div>
+            <label for="search">Search</label>
+            <input id="search" name="q" value="@Model.Query" />
+            <button type="submit">Search</button>
+        </div>
+        <table>
+            <thead>
+            </thead>
+            <tbody>
+                @foreach (var schedule in Model.Schedules)
+                {
+                    <tr>
+                        <td>@schedule.Date.ToString("dd-MM-yyyy")</td>
+                        <td>@schedule.From.ToString("hh:mm tt")</td>
+                        <td>@schedule.To.ToString("hh:mm tt")</td>
+                        <td>@schedule.Town</td>
+                        <td>@schedule.SubStation</td>
+                        <td>@schedule.Feeder</td>
+                        <td>@schedule.Location?.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div>
+            @Html.Hidden("circleId", Model.Circle.Id)
+            @Html.Hidden("pageNumber", Model.PageNumber)
+
+            <span>Showing @(((Model.PageNumber - 1) * Model.PageSize) + 1) to @(Model.PageNumber * Model.PageSize) of @Model.TotalCount</span>
+
+            <select name="pageSize" onchange="this.form.submit()">
+                @foreach (int value in new int[] { 10, 20, 50 })
+                {
+                    <option value="@value" selected="@(Model.PageSize == value ? "selected" : null)">@value</option>
+                }
+            </select>
+
+            <ul>
+                @for (int i = 1; i <= Model.MaxPageNumber; i++)
+                {
+                    <li>
+                        @if (Model.PageNumber == i)
+                        {
+                            <span>@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Schedule", new { circleId = Model.Circle.Id, pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </form>
+</div>

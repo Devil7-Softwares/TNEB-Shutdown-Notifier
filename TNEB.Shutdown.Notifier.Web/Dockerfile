@@ -9,17 +9,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["TNEB-Shutdown/TNEB-Shutdown.csproj", "TNEB-Shutdown/"]
-RUN dotnet restore "./TNEB-Shutdown/./TNEB-Shutdown.csproj"
+COPY ["TNEB.Shutdown.Notifier.Web/TNEB.Shutdown.Notifier.Web.csproj", "TNEB.Shutdown.Notifier.Web/"]
+RUN dotnet restore "./TNEB.Shutdown.Notifier.Web/./TNEB.Shutdown.Notifier.Web.csproj"
 COPY . .
-WORKDIR "/src/TNEB-Shutdown"
-RUN dotnet build "./TNEB-Shutdown.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/TNEB.Shutdown.Notifier.Web"
+RUN dotnet build "./TNEB.Shutdown.Notifier.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./TNEB-Shutdown.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./TNEB.Shutdown.Notifier.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TNEB-Shutdown.dll"]
+ENTRYPOINT ["dotnet", "TNEB.Shutdown.Notifier.Web.dll"]

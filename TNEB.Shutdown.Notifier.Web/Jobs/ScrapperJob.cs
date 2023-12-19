@@ -7,6 +7,8 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 {
     public class ScheduleScrapperJob : IJob
     {
+        public static readonly JobKey Key = new JobKey("ScheduleScrapperJob", "Scrapper");
+
         private readonly ILogger<ScheduleScrapperJob> logger;
         private readonly AppDbContext dbContext;
 
@@ -168,6 +170,8 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
     public class CircleScrapperJob : IJob
     {
+        public static readonly JobKey Key = new JobKey("CircleScrapperJob", "Scrapper");
+
         private readonly ILogger<CircleScrapperJob> logger;
         private readonly AppDbContext dbContext;
 
@@ -280,7 +284,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
             ISchedulerFactory schedulerFactory = app.Services.GetRequiredService<ISchedulerFactory>();
             IScheduler scheduler = schedulerFactory.GetScheduler().Result;
 
-            IJobDetail circleScrapperJob = JobBuilder.Create<CircleScrapperJob>().WithIdentity("CircleScrapperJob", "Scrapper").Build();
+            IJobDetail circleScrapperJob = JobBuilder.Create<CircleScrapperJob>().WithIdentity(CircleScrapperJob.Key).Build();
 
             if (!scheduler.CheckExists(circleScrapperJob.Key).Result)
             {
@@ -295,7 +299,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 scheduler.ScheduleJob(circleScrapperJob, circleScrapperTrigger).Wait();
             }
 
-            IJobDetail scheduleScrapperJob = JobBuilder.Create<ScheduleScrapperJob>().WithIdentity("ScheduleScrapperJob", "Scrapper").Build();
+            IJobDetail scheduleScrapperJob = JobBuilder.Create<ScheduleScrapperJob>().WithIdentity(ScheduleScrapperJob.Key).Build();
 
             if (!scheduler.CheckExists(scheduleScrapperJob.Key).Result)
             {

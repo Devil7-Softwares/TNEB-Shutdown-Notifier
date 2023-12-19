@@ -62,11 +62,12 @@ namespace TNEB.Shutdown.Notifier.Web.Utils
             {
                 string? header = context.Request.Headers["Authorization"];
 
-                if (header != null)
+                if (!string.IsNullOrWhiteSpace(header))
                 {
-                    string? encoded = AuthenticationHeaderValue.Parse(header).Parameter;
+                    AuthenticationHeaderValue headerValue = AuthenticationHeaderValue.Parse(header);
+                    string? encoded = headerValue.Parameter;
 
-                    if (encoded != null)
+                    if (headerValue.Scheme == "Basic" && !string.IsNullOrWhiteSpace(encoded))
                     {
                         string[] credentials = Encoding.UTF8.GetString(Convert.FromBase64String(encoded)).Split(':', 2);
 

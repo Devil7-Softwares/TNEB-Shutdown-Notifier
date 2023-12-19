@@ -62,41 +62,37 @@ namespace TNEB.Shutdown.Notifier.Web.Utils
             {
                 string? header = context.Request.Headers["Authorization"];
 
-                if (header == null)
+                if (header != null)
                 {
-                    throw new Exception("Authorization header not found.");
-                }
+                    string? encoded = AuthenticationHeaderValue.Parse(header).Parameter;
 
-                string? encoded = AuthenticationHeaderValue.Parse(header).Parameter;
-
-                if (encoded == null)
-                {
-                    throw new Exception("Authorization header not found.");
-                }
-
-                string[] credentials = Encoding.UTF8.GetString(Convert.FromBase64String(encoded)).Split(':', 2);
-
-                var config = configuration.GetSection("BasicAuthUsers").GetChildren();
-
-                if (config == null)
-                {
-                    throw new Exception("Basic auth users not configured.");
-                }
-
-                IEnumerable<BasicAuthUser> users = config.Select(i =>
-                {
-                    string? username = i.GetValue<string>("Username");
-                    string? password = i.GetValue<string>("Password");
-
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                    if (encoded != null)
                     {
-                        throw new Exception("Invalid basic auth user configuration.");
+                        string[] credentials = Encoding.UTF8.GetString(Convert.FromBase64String(encoded)).Split(':', 2);
+
+                        var config = configuration.GetSection("BasicAuthUsers").GetChildren();
+
+                        if (config == null)
+                        {
+                            throw new Exception("Basic auth users not configured.");
+                        }
+
+                        IEnumerable<BasicAuthUser> users = config.Select(i =>
+                        {
+                            string? username = i.GetValue<string>("Username");
+                            string? password = i.GetValue<string>("Password");
+
+                            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                            {
+                                throw new Exception("Invalid basic auth user configuration.");
+                            }
+
+                            return new BasicAuthUser(username, password);
+                        });
+
+                        context.Items["User"] = users.First(u => u.Username.Equals(credentials[0], StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(credentials[1]));
                     }
-
-                    return new BasicAuthUser(username, password);
-                });
-
-                context.Items["User"] = users.First(u => u.Username.Equals(credentials[0], StringComparison.InvariantCultureIgnoreCase) && u.Password.Equals(credentials[1]));
+                }
             }
             catch (Exception ex)
             {

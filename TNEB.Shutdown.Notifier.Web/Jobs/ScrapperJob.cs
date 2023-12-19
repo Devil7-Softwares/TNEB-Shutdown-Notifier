@@ -89,7 +89,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
                 try
                 {
-                    ISchedule[] circleSchedules = await Utils.GetSchedules(circleEntry.Value);
+                    ISchedule[] circleSchedules = await Scrapper.Utils.GetSchedules(circleEntry.Value);
                     logger.LogInformation($"[{i + 1}/{circleEntries.Length}] {circleSchedules.Length} Schedules fetched for circle {circleEntry.Name} ({circleEntry.Value})!");
 
                     circleSchedule.Add(circleEntry, circleSchedules);
@@ -189,7 +189,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
             {
 
                 logger.LogDebug("Fetching circles...");
-                circles = await Utils.GetCircles();
+                circles = await Scrapper.Utils.GetCircles();
                 logger.LogInformation($"{circles.Length} Circles fetched!");
             }
             catch (Exception ex)

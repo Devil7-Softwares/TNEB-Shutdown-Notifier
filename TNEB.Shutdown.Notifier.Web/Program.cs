@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Quartz;
 using TNEB.Shutdown.Notifier.Web.Data;
 using TNEB.Shutdown.Notifier.Web.Jobs;
+using TNEB.Shutdown.Notifier.Web.Utils;
 
 namespace TNEB.Shutdown.Notifier.Web
 {
@@ -56,6 +57,8 @@ namespace TNEB.Shutdown.Notifier.Web
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseBasicAuth();
 
             app.MapControllerRoute(
                 name: "default",

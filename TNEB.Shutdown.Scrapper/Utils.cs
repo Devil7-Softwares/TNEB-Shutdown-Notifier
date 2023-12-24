@@ -26,7 +26,7 @@ namespace TNEB.Shutdown.Scrapper
             return _httpClient.GetStringAsync(Constants.TNEB_FORM_URL);
         }
 
-        public static async Task<Circle[]> GetCircles()
+        public static async Task<ScrappedCircle[]> GetCircles()
         {
             string html = await GetFormHtml();
 
@@ -35,7 +35,7 @@ namespace TNEB.Shutdown.Scrapper
 
             HtmlNodeCollection options = htmlDoc.DocumentNode.SelectNodes("//select/option");
 
-            List<Circle> circles = new List<Circle>();
+            List<ScrappedCircle> circles = new List<ScrappedCircle>();
 
             foreach (HtmlNode node in options)
             {
@@ -44,7 +44,7 @@ namespace TNEB.Shutdown.Scrapper
                     continue;
                 }
 
-                circles.Add(new Circle(node.InnerText, node.GetAttributeValue("value", string.Empty)));
+                circles.Add(new ScrappedCircle(node.InnerText, node.GetAttributeValue("value", string.Empty)));
             }
 
             return circles.ToArray();
@@ -111,7 +111,7 @@ namespace TNEB.Shutdown.Scrapper
             return new ViewState(formId, viewState);
         }
 
-        public static async Task<Schedule[]> GetSchedules(string circleCode)
+        public static async Task<ScrappedSchedule[]> GetSchedules(string circleCode)
         {
             ViewState viewState = await GetViewState();
             string captcha = await GetCaptcha();
@@ -138,7 +138,7 @@ namespace TNEB.Shutdown.Scrapper
 
             if (rowNodes == null || rowNodes.Count == 0)
             {
-                return new Schedule[0];
+                return new ScrappedSchedule[0];
             }
 
             return rowNodes.TakeWhile(node => node != null).Select((rowNode) =>
@@ -153,7 +153,7 @@ namespace TNEB.Shutdown.Scrapper
                 DateTimeOffset from = ParseDateTime(rowNode.ChildNodes[6].InnerText, true);
                 DateTimeOffset to = ParseDateTime(rowNode.ChildNodes[7].InnerText, false);
 
-                return new Schedule(date, from, to, town, subStation, feeder, location, typeOfWork);
+                return new ScrappedSchedule(date, from, to, town, subStation, feeder, location, typeOfWork);
             }).ToArray();
         }
     }

@@ -5,7 +5,7 @@ namespace TNEB.Shutdown.Scrapper.Test
         [Fact]
         public async Task ShouldFetchCircles()
         {
-            Circle[] circles = await Utils.GetCircles();
+            ScrappedCircle[] circles = await Utils.GetCircles();
             Assert.NotEmpty(circles);
         }
 
@@ -31,16 +31,16 @@ namespace TNEB.Shutdown.Scrapper.Test
         [Fact]
         public async Task ShouldFetchSchedules()
         {
-            Schedule[] schedules1 = await Utils.GetSchedules("0435");
-            Schedule[] schedules2 = await Utils.GetSchedules("0430");
-            Schedule[] schedules3 = await Utils.GetSchedules("0432");
-            Schedule[] schedules4 = await Utils.GetSchedules("0400");
-            Schedule[] schedules5 = await Utils.GetSchedules("0401");
-            Schedule[] schedules6 = await Utils.GetSchedules("0402");
-            Schedule[] schedules7 = await Utils.GetSchedules("0404");
-            Schedule[] schedules8 = await Utils.GetSchedules("0406");
+            ScrappedSchedule[] schedules1 = await Utils.GetSchedules("0435");
+            ScrappedSchedule[] schedules2 = await Utils.GetSchedules("0430");
+            ScrappedSchedule[] schedules3 = await Utils.GetSchedules("0432");
+            ScrappedSchedule[] schedules4 = await Utils.GetSchedules("0400");
+            ScrappedSchedule[] schedules5 = await Utils.GetSchedules("0401");
+            ScrappedSchedule[] schedules6 = await Utils.GetSchedules("0402");
+            ScrappedSchedule[] schedules7 = await Utils.GetSchedules("0404");
+            ScrappedSchedule[] schedules8 = await Utils.GetSchedules("0406");
 
-            Schedule[] schedules = schedules1.Concat(schedules2).Concat(schedules3).Concat(schedules4).Concat(schedules5).Concat(schedules6).Concat(schedules7).Concat(schedules8).ToArray();
+            ScrappedSchedule[] schedules = schedules1.Concat(schedules2).Concat(schedules3).Concat(schedules4).Concat(schedules5).Concat(schedules6).Concat(schedules7).Concat(schedules8).ToArray();
 
             Assert.NotEmpty(schedules);
         }

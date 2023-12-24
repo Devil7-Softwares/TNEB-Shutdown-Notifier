@@ -14,7 +14,7 @@ namespace TNEB.Shutdown.Scrapper
         public string TypeOfWork { get; set; }
     }
 
-    public class Schedule : ISchedule
+    public class ScrappedSchedule : ISchedule
     {
         /// <summary>
         /// The date of outage.
@@ -64,7 +64,7 @@ namespace TNEB.Shutdown.Scrapper
         [JsonPropertyName("typeOfWork")]
         public string TypeOfWork { get; set; }
 
-        public Schedule(DateTimeOffset date, DateTimeOffset from, DateTimeOffset to, string town, string subStation, string feeder, string location, string typeOfWork)
+        public ScrappedSchedule(DateTimeOffset date, DateTimeOffset from, DateTimeOffset to, string town, string subStation, string feeder, string location, string typeOfWork)
         {
             Date = date;
             From = from;
@@ -76,7 +76,7 @@ namespace TNEB.Shutdown.Scrapper
             TypeOfWork = typeOfWork;
         }
 
-        public Schedule()
+        public ScrappedSchedule()
         {
             Date = DateTime.Now;
             From = DateTime.Now;

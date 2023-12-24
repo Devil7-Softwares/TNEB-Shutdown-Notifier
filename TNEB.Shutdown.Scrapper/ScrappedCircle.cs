@@ -8,7 +8,7 @@ namespace TNEB.Shutdown.Scrapper
         public string Name { get; set; }
     }
 
-    public class Circle : ICircle
+    public class ScrappedCircle : ICircle
     {
         /// <summary>
         /// Circle ID from TNEB
@@ -28,13 +28,13 @@ namespace TNEB.Shutdown.Scrapper
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        public Circle(string name, string value)
+        public ScrappedCircle(string name, string value)
         {
             Name = name;
             Value = value;
         }
 
-        public Circle()
+        public ScrappedCircle()
         {
             Name = string.Empty;
             Value = string.Empty;

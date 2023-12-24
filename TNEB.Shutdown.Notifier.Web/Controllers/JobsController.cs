@@ -8,16 +8,10 @@ namespace TNEB.Shutdown.Notifier.Web.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [BasicAuthorize]
-    public class JobsController : ControllerBase
+    public class JobsController(ILogger<JobsController> logger, ISchedulerFactory schedulerFactory) : ControllerBase
     {
-        private readonly ILogger<JobsController> _logger;
-        private readonly ISchedulerFactory _schedulerFactory;
-
-        public JobsController(ILogger<JobsController> logger, ISchedulerFactory schedulerFactory)
-        {
-            _logger = logger;
-            _schedulerFactory = schedulerFactory;
-        }
+        private readonly ILogger<JobsController> _logger = logger;
+        private readonly ISchedulerFactory _schedulerFactory = schedulerFactory;
 
         /// <summary>
         /// Manually trigger the circle scrapper job.

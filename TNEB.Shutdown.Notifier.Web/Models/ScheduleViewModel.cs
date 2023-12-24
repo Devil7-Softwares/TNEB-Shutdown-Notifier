@@ -2,25 +2,14 @@
 
 namespace TNEB.Shutdown.Notifier.Web.Models
 {
-    public class ScheduleViewModel
+    public class ScheduleViewModel(Circle circle, int pageNumber, int pageSize, string query, int totalCount, Schedule[] scheduleEntries)
     {
-        public Circle Circle { get; }
-        public int PageNumber { get; }
-        public int PageSize { get; }
-        public string Query { get; }
-        public int TotalCount { get; }
-        public int MaxPageNumber { get; }
-        public Schedule[] Schedules { get; }
-
-        public ScheduleViewModel(Circle circle, int pageNumber, int pageSize, string query, int totalCount, Schedule[] scheduleEntries)
-        {
-            Circle = circle;
-            PageNumber = pageNumber;
-            PageSize = pageSize;
-            Query = query;
-            TotalCount = totalCount;
-            Schedules = scheduleEntries;
-            MaxPageNumber = (int)Math.Ceiling((double)totalCount / pageSize);
-        }
+        public Circle Circle { get; } = circle;
+        public int PageNumber { get; } = pageNumber;
+        public int PageSize { get; } = pageSize;
+        public string Query { get; } = query;
+        public int TotalCount { get; } = totalCount;
+        public int MaxPageNumber { get; } = (int)Math.Ceiling((double)totalCount / pageSize);
+        public Schedule[] Schedules { get; } = scheduleEntries;
     }
 }

@@ -4,16 +4,12 @@ using TNEB.Shutdown.Notifier.Web.Data.Models;
 
 namespace TNEB.Shutdown.Notifier.Web.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
         public DbSet<LocationStandardization> LocationStandardization { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Circle> Circles { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

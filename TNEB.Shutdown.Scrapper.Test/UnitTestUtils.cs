@@ -12,7 +12,7 @@ namespace TNEB.Shutdown.Scrapper.Test
         [Fact]
         public void ShouldResolveCaptchas()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo("Captcha");
+            DirectoryInfo directoryInfo = new("Captcha");
             Assert.True(directoryInfo.Exists);
 
             FileInfo[] files = directoryInfo.GetFiles("*.jpg");
@@ -40,7 +40,7 @@ namespace TNEB.Shutdown.Scrapper.Test
             ScrappedSchedule[] schedules7 = await Utils.GetSchedules("0404");
             ScrappedSchedule[] schedules8 = await Utils.GetSchedules("0406");
 
-            ScrappedSchedule[] schedules = schedules1.Concat(schedules2).Concat(schedules3).Concat(schedules4).Concat(schedules5).Concat(schedules6).Concat(schedules7).Concat(schedules8).ToArray();
+            ScrappedSchedule[] schedules = [.. schedules1, .. schedules2, .. schedules3, .. schedules4, .. schedules5, .. schedules6, .. schedules7, .. schedules8];
 
             Assert.NotEmpty(schedules);
         }

@@ -22,7 +22,7 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.CircleEntry", b =>
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.Circle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,14 +50,18 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CircleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("CircleId", "Name")
+                        .IsUnique()
+                        .HasFilter("[CircleId] IS NOT NULL");
 
                     b.ToTable("Locations");
                 });
@@ -81,7 +85,7 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                     b.ToTable("LocationStandardization");
                 });
 
-            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.ScheduleEntry", b =>
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,6 +105,9 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ScrappedScheduleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SubStation")
@@ -124,12 +131,76 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
 
                     b.HasIndex("LocationId");
 
+                    b.HasIndex("ScrappedScheduleId");
+
                     b.ToTable("Schedules");
                 });
 
-            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.ScheduleEntry", b =>
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.ScrappedSchedule", b =>
                 {
-                    b.HasOne("TNEB.Shutdown.Notifier.Web.Data.Models.CircleEntry", "Circle")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CircleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("datetimeoffset")
+                        .HasAnnotation("Relational:JsonPropertyName", "date");
+
+                    b.Property<string>("Feeder")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "feeder");
+
+                    b.Property<DateTimeOffset>("From")
+                        .HasColumnType("datetimeoffset")
+                        .HasAnnotation("Relational:JsonPropertyName", "from");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "location");
+
+                    b.Property<string>("SubStation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "subStation");
+
+                    b.Property<DateTimeOffset>("To")
+                        .HasColumnType("datetimeoffset")
+                        .HasAnnotation("Relational:JsonPropertyName", "to");
+
+                    b.Property<string>("Town")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "town");
+
+                    b.Property<string>("TypeOfWork")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "typeOfWork");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CircleId");
+
+                    b.ToTable("ScrappedSchedules");
+                });
+
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.Location", b =>
+                {
+                    b.HasOne("TNEB.Shutdown.Notifier.Web.Data.Models.Circle", "Circle")
+                        .WithMany()
+                        .HasForeignKey("CircleId");
+
+                    b.Navigation("Circle");
+                });
+
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.Schedule", b =>
+                {
+                    b.HasOne("TNEB.Shutdown.Notifier.Web.Data.Models.Circle", "Circle")
                         .WithMany()
                         .HasForeignKey("CircleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -141,9 +212,26 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TNEB.Shutdown.Notifier.Web.Data.Models.ScrappedSchedule", "ScrappedSchedule")
+                        .WithMany()
+                        .HasForeignKey("ScrappedScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Circle");
 
                     b.Navigation("Location");
+
+                    b.Navigation("ScrappedSchedule");
+                });
+
+            modelBuilder.Entity("TNEB.Shutdown.Notifier.Web.Data.Models.ScrappedSchedule", b =>
+                {
+                    b.HasOne("TNEB.Shutdown.Notifier.Web.Data.Models.Circle", "Circle")
+                        .WithMany()
+                        .HasForeignKey("CircleId");
+
+                    b.Navigation("Circle");
                 });
 #pragma warning restore 612, 618
         }

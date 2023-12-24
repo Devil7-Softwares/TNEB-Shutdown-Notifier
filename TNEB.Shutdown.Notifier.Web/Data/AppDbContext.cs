@@ -10,6 +10,7 @@ namespace TNEB.Shutdown.Notifier.Web.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Circle> Circles { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScrappedSchedule> ScrappedSchedules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

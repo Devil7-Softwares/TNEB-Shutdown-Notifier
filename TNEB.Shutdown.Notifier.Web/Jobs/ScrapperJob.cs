@@ -12,18 +12,9 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
         private readonly ILogger<ScheduleScrapperJob> logger = logger;
         private readonly AppDbContext dbContext = dbContext;
 
-        private Location[]? locations;
-
-        private async Task<Location> GetLocation(string locationName)
+        private async Task<Location> GetLocation(Guid circleId, string locationName)
         {
-            if (locations == null)
-            {
-                logger.LogDebug("Fetching locations...");
-                locations = [.. dbContext.Locations];
-                logger.LogInformation("{LocationCount} Locations fetched!", locations.Length);
-            }
-
-            Location? location = locations.FirstOrDefault(l => l.Name == locationName);
+            Location? location = dbContext.Locations.FirstOrDefault(l => l.Name == locationName && l.CircleId.Equals(circleId));
 
             if (location == null)
             {
@@ -31,22 +22,19 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
                 if (locationStandardization != null)
                 {
-                    location = dbContext.Locations.FirstOrDefault(l => l.Name == locationStandardization.StandardizedLocation);
+                    location = dbContext.Locations.FirstOrDefault(l => l.Name == locationStandardization.StandardizedLocation && l.CircleId.Equals(circleId));
                 }
 
                 if (location == null)
                 {
                     logger.LogDebug("Adding location {LocationName}...", locationName);
 
-                    location = new Location
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = locationStandardization?.StandardizedLocation ?? locationName
-                    };
+                    location = new Location(circleId, locationStandardization?.StandardizedLocation ?? locationName);
 
                     dbContext.Locations.Add(location);
 
                     await dbContext.SaveChangesAsync<Location>();
+
                     logger.LogDebug("Location {LocationName} added!", locationName);
                 }
             }
@@ -76,7 +64,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 return;
             }
 
-            Dictionary<Circle, ISchedule[]> circleSchedule = [];
+            Dictionary<Circle, Data.Models.ScrappedSchedule[]> circleScheduleDict = [];
 
             for (int i = 0; i < circles.Length; i++)
             {
@@ -85,10 +73,30 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
                 try
                 {
-                    ISchedule[] circleSchedules = await Scrapper.Utils.GetSchedules(circleEntry.Value);
-                    logger.LogInformation("[{CurrentIndex}/{CirclesLength}] {CircleSchedulesLength} Schedules fetched for circle {CircleEntryName} ({CircleEntryValue})!", i + 1, circles.Length, circleSchedules.Length, circleEntry.Name, circleEntry.Value);
+                    ISchedule[] schedules = await Scrapper.Utils.GetSchedules(circleEntry.Value);
+                    logger.LogInformation("[{CurrentIndex}/{CirclesLength}] {CircleSchedulesLength} Schedules fetched for circle {CircleEntryName} ({CircleEntryValue})!", i + 1, circles.Length, schedules.Length, circleEntry.Name, circleEntry.Value);
 
-                    circleSchedule.Add(circleEntry, circleSchedules);
+                    List<Data.Models.ScrappedSchedule> scrappedSchedules = [];
+
+                    foreach (ISchedule schedule in schedules)
+                    {
+                        Data.Models.ScrappedSchedule? existingScrappedSchedule = dbContext.ScrappedSchedules.FirstOrDefault(s => s.Date == schedule.Date && s.From == schedule.From && s.To == schedule.To && s.Town == schedule.Town && s.SubStation == schedule.SubStation && s.Feeder == schedule.Feeder && s.TypeOfWork == schedule.TypeOfWork);
+
+                        if (existingScrappedSchedule == null)
+                        {
+                            logger.LogDebug("Adding scrapped schedule for {ScheduleTown} - {ScheduleSubStation} - {ScheduleFeeder} ({ScheduleDate})...", schedule.Town, schedule.SubStation, schedule.Feeder, schedule.Date.ToString("yyyy-MM-dd"));
+
+                            Data.Models.ScrappedSchedule scrappedSchedule = new(circleEntry, schedule);
+
+                            dbContext.ScrappedSchedules.Add(scrappedSchedule);
+
+                            scrappedSchedules.Add(scrappedSchedule);
+
+                            logger.LogInformation("Scrapped schedule for {ScheduleTown} - {ScheduleSubStation} - {ScheduleFeeder} ({ScheduleDate}) added!", schedule.Town, schedule.SubStation, schedule.Feeder, schedule.Date.ToString("yyyy-MM-dd"));
+                        }
+                    }
+
+                    circleScheduleDict.Add(circleEntry, [.. scrappedSchedules]);
                 }
                 catch (Exception ex)
                 {
@@ -97,38 +105,30 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 }
             }
 
-            foreach (KeyValuePair<Circle, ISchedule[]> keyValue in circleSchedule)
-            {
-                Data.Models.Circle circle = keyValue.Key;
-                ISchedule[] schedules = keyValue.Value;
+            logger.LogDebug("Saving scrapped schedules...");
+            await dbContext.SaveChangesAsync<Data.Models.ScrappedSchedule>();
+            logger.LogInformation("Scrapped schedules saved!");
 
-                foreach (ISchedule schedule in schedules)
+            foreach (KeyValuePair<Circle, Data.Models.ScrappedSchedule[]> keyValue in circleScheduleDict)
+            {
+                Circle circle = keyValue.Key;
+                Data.Models.ScrappedSchedule[] schedules = keyValue.Value;
+
+                foreach (Data.Models.ScrappedSchedule schedule in schedules)
                 {
-                    string[] locationNames = schedule.Location.Split(',').Select(l => l.Trim()).TakeWhile(l => !string.IsNullOrWhiteSpace(l)).ToArray();
+                    string[] locationNames = schedule.Location.Split(',', '•').Select(l => l.Trim()).TakeWhile(l => !string.IsNullOrWhiteSpace(l)).ToArray();
 
                     foreach (string locationName in locationNames)
                     {
-                        Location location = await GetLocation(locationName);
+                        Location location = await GetLocation(circle.Id, locationName);
 
-                        Data.Models.Schedule? existingScheduleEntry = dbContext.Schedules.FirstOrDefault(s => s.Date == schedule.Date && s.From == schedule.From && s.To == schedule.To && s.LocationId == location.Id && s.CircleId == circle.Id);
+                        Schedule? existingScheduleEntry = dbContext.Schedules.FirstOrDefault(s => s.Date == schedule.Date && s.From == schedule.From && s.To == schedule.To && s.LocationId == location.Id && s.CircleId == circle.Id);
 
                         if (existingScheduleEntry == null)
                         {
                             logger.LogDebug("Adding schedule for {LocationName} ({ScheduleDate})...", location.Name, schedule.Date.ToString("yyyy-MM-dd"));
 
-                            Schedule scheduleEntry = new()
-                            {
-                                Id = Guid.NewGuid(),
-                                Date = schedule.Date,
-                                From = schedule.From,
-                                To = schedule.To,
-                                Town = schedule.Town,
-                                SubStation = schedule.SubStation,
-                                Feeder = schedule.Feeder,
-                                TypeOfWork = schedule.TypeOfWork,
-                                LocationId = location.Id,
-                                CircleId = circle.Id
-                            };
+                            Schedule scheduleEntry = new(circle, location, schedule);
 
                             dbContext.Schedules.Add(scheduleEntry);
 

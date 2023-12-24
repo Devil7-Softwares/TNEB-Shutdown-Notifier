@@ -4,26 +4,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TNEB.Shutdown.Notifier.Web.Data.Models
 {
-    [Index(nameof(Name), IsUnique = true)]
-    public class Location
+    [Index(nameof(CircleId), nameof(Name), IsUnique = true)]
+    public class Location(Guid circleId, string name)
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = name;
 
-        public Location()
+        public Guid? CircleId { get; set; } = circleId;
+
+        [ForeignKey(nameof(CircleId))]
+        public Circle? Circle { get; set; }
+
+        public Location() : this(Guid.NewGuid())
         {
-            Id = Guid.NewGuid();
-            Name = string.Empty;
         }
 
-        public Location(string name)
+        public Location(Circle circle) : this(circle.Id)
         {
-            Id = Guid.NewGuid();
-            Name = name;
+        }
+
+        public Location(Guid circleId) : this(circleId, string.Empty)
+        {
+        }
+
+        public Location(Circle circle, string name) : this(circle.Id, name)
+        {
         }
     }
 }

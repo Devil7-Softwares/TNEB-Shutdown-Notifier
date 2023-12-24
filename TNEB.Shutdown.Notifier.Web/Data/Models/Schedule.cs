@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TNEB.Shutdown.Scrapper;
 
 namespace TNEB.Shutdown.Notifier.Web.Data.Models
 {
@@ -43,6 +42,12 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
         [ForeignKey(nameof(CircleId))]
         public Circle? Circle { get; set; }
 
+        [Required]
+        public Guid ScrappedScheduleId { get; set; }
+
+        [ForeignKey(nameof(ScrappedScheduleId))]
+        public ScrappedSchedule? ScrappedSchedule { get; set; }
+
         public Schedule()
         {
             Id = Guid.NewGuid();
@@ -57,9 +62,11 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
             Location = null;
             CircleId = Guid.Empty;
             Circle = null;
+            ScrappedScheduleId = Guid.Empty;
+            ScrappedSchedule = null;
         }
 
-        public Schedule(Circle circle, Location location, ISchedule schedule)
+        public Schedule(Circle circle, Location location, ScrappedSchedule schedule)
         {
             Id = Guid.NewGuid();
             Date = schedule.Date;
@@ -73,6 +80,8 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
             Location = location;
             CircleId = circle.Id;
             Circle = circle;
+            ScrappedScheduleId = schedule.Id;
+            ScrappedSchedule = schedule;
         }
     }
 }

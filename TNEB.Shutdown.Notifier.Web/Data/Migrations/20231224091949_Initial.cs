@@ -25,18 +25,6 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LocationStandardization",
                 columns: table => new
                 {
@@ -47,6 +35,49 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LocationStandardization", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Locations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CircleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Locations_Circles_CircleId",
+                        column: x => x.CircleId,
+                        principalTable: "Circles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScrappedSchedules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CircleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    From = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    To = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Town = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SubStation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Feeder = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TypeOfWork = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScrappedSchedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ScrappedSchedules_Circles_CircleId",
+                        column: x => x.CircleId,
+                        principalTable: "Circles",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -62,7 +93,8 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                     Feeder = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TypeOfWork = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CircleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CircleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ScrappedScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,6 +111,12 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                         principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schedules_ScrappedSchedules_ScrappedScheduleId",
+                        column: x => x.ScrappedScheduleId,
+                        principalTable: "ScrappedSchedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -88,10 +126,11 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_Name",
+                name: "IX_Locations_CircleId_Name",
                 table: "Locations",
-                column: "Name",
-                unique: true);
+                columns: new[] { "CircleId", "Name" },
+                unique: true,
+                filter: "[CircleId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Schedules_CircleId",
@@ -102,6 +141,16 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                 name: "IX_Schedules_LocationId",
                 table: "Schedules",
                 column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_ScrappedScheduleId",
+                table: "Schedules",
+                column: "ScrappedScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScrappedSchedules_CircleId",
+                table: "ScrappedSchedules",
+                column: "CircleId");
         }
 
         /// <inheritdoc />
@@ -114,10 +163,13 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Migrations
                 name: "Schedules");
 
             migrationBuilder.DropTable(
-                name: "Circles");
+                name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "ScrappedSchedules");
+
+            migrationBuilder.DropTable(
+                name: "Circles");
         }
     }
 }

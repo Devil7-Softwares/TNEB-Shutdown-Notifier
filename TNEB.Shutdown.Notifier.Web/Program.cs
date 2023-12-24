@@ -1,3 +1,4 @@
+using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
@@ -20,6 +21,17 @@ namespace TNEB.Shutdown.Notifier.Web
                 options.DefaultEngineName = ChakraCoreJsEngine.EngineName
             )
                 .AddChakraCore();
+
+            builder.Services.AddWebOptimizer((pipeline) =>
+            {
+                pipeline.CompileScssFiles(null, "css/**/*.scss");
+
+                if (builder.Environment.IsProduction())
+                {
+                    pipeline.MinifyJsFiles("js/**/*.js");
+                    pipeline.MinifyCssFiles("css/**/*.css");
+                }
+            });
 
             builder.Services.AddQuartz(q =>
             {
@@ -58,6 +70,9 @@ namespace TNEB.Shutdown.Notifier.Web
             }
 
             app.UseHttpsRedirection();
+
+            app.UseWebOptimizer();
+
             app.UseStaticFiles();
 
             app.UseRouting();

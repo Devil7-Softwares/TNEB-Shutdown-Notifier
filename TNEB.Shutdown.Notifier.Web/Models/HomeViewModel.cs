@@ -4,9 +4,9 @@ namespace TNEB.Shutdown.Notifier.Web.Models
 {
     public class HomeViewModel
     {
-        public CircleEntry[] Circles { get; }
+        public Circle[] Circles { get; }
 
-        public HomeViewModel(CircleEntry[] circles)
+        public HomeViewModel(Circle[] circles)
         {
             Circles = circles;
         }

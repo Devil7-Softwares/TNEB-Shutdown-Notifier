@@ -6,7 +6,7 @@ using TNEB.Shutdown.Scrapper;
 namespace TNEB.Shutdown.Notifier.Web.Data.Models
 {
     [Index(nameof(Value), IsUnique = true)]
-    public class CircleEntry : ICircle
+    public class Circle : ICircle
     {
         [Key]
         [Required]
@@ -19,14 +19,14 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
         [Required]
         public string Name { get; set; }
 
-        public CircleEntry()
+        public Circle()
         {
             Id = Guid.NewGuid();
             Name = string.Empty;
             Value = string.Empty;
         }
 
-        public CircleEntry(string name, string value)
+        public Circle(string name, string value)
         {
             Id = Guid.NewGuid();
             Name = name;

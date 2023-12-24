@@ -4,7 +4,7 @@ using TNEB.Shutdown.Scrapper;
 
 namespace TNEB.Shutdown.Notifier.Web.Data.Models
 {
-    public class ScheduleEntry
+    public class Schedule
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -41,9 +41,9 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
         public Guid CircleId { get; set; }
 
         [ForeignKey(nameof(CircleId))]
-        public CircleEntry? Circle { get; set; }
+        public Circle? Circle { get; set; }
 
-        public ScheduleEntry()
+        public Schedule()
         {
             Id = Guid.NewGuid();
             Date = DateTimeOffset.MinValue;
@@ -59,7 +59,7 @@ namespace TNEB.Shutdown.Notifier.Web.Data.Models
             Circle = null;
         }
 
-        public ScheduleEntry(CircleEntry circle, Location location, ISchedule schedule)
+        public Schedule(Circle circle, Location location, ISchedule schedule)
         {
             Id = Guid.NewGuid();
             Date = schedule.Date;

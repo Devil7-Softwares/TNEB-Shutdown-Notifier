@@ -8,8 +8,8 @@ namespace TNEB.Shutdown.Notifier.Web.Data
     {
         public DbSet<LocationStandardization> LocationStandardization { get; set; }
         public DbSet<Location> Locations { get; set; }
-        public DbSet<CircleEntry> Circles { get; set; }
-        public DbSet<ScheduleEntry> Schedules { get; set; }
+        public DbSet<Circle> Circles { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -17,8 +17,8 @@ namespace TNEB.Shutdown.Notifier.Web.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            EntityTypeBuilder<ScheduleEntry> scheduleEntryBuilder = modelBuilder
-                 .Entity<ScheduleEntry>();
+            EntityTypeBuilder<Schedule> scheduleEntryBuilder = modelBuilder
+                 .Entity<Schedule>();
 
             scheduleEntryBuilder.Property(e => e.Date).HasConversion(Converters.DateTimeOffsetToUnix);
             scheduleEntryBuilder.Property(e => e.From).HasConversion(Converters.DateTimeOffsetToUnix);

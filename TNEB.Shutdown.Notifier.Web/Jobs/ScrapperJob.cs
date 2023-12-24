@@ -62,7 +62,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            CircleEntry[] circleEntries = Array.Empty<CircleEntry>();
+            Data.Models.Circle[] circleEntries = Array.Empty<Data.Models.Circle>();
 
             try
             {
@@ -82,11 +82,11 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 return;
             }
 
-            Dictionary<CircleEntry, ISchedule[]> circleSchedule = new Dictionary<CircleEntry, ISchedule[]>();
+            Dictionary<Data.Models.Circle, ISchedule[]> circleSchedule = new Dictionary<Data.Models.Circle, ISchedule[]>();
 
             for (int i = 0; i < circleEntries.Length; i++)
             {
-                CircleEntry circleEntry = circleEntries[i];
+                Data.Models.Circle circleEntry = circleEntries[i];
                 logger.LogDebug($"[{i + 1}/{circleEntries.Length}] Fetching schedules for circle {circleEntry.Name} ({circleEntry.Value})...");
 
                 try
@@ -103,9 +103,9 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 }
             }
 
-            foreach (KeyValuePair<CircleEntry, ISchedule[]> keyValue in circleSchedule)
+            foreach (KeyValuePair<Data.Models.Circle, ISchedule[]> keyValue in circleSchedule)
             {
-                CircleEntry circle = keyValue.Key;
+                Data.Models.Circle circle = keyValue.Key;
                 ISchedule[] schedules = keyValue.Value;
 
                 foreach (ISchedule schedule in schedules)
@@ -116,13 +116,13 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                     {
                         Location location = await GetLocation(locationName);
 
-                        ScheduleEntry? existingScheduleEntry = dbContext.Schedules.FirstOrDefault(s => s.Date == schedule.Date && s.From == schedule.From && s.To == schedule.To && s.LocationId == location.Id && s.CircleId == circle.Id);
+                        Data.Models.Schedule? existingScheduleEntry = dbContext.Schedules.FirstOrDefault(s => s.Date == schedule.Date && s.From == schedule.From && s.To == schedule.To && s.LocationId == location.Id && s.CircleId == circle.Id);
 
                         if (existingScheduleEntry == null)
                         {
                             logger.LogDebug($"Adding schedule for {location.Name} ({schedule.Date.ToString("yyyy-MM-dd")})...");
 
-                            ScheduleEntry scheduleEntry = new ScheduleEntry
+                            Data.Models.Schedule scheduleEntry = new Data.Models.Schedule
                             {
                                 Id = Guid.NewGuid(),
                                 Date = schedule.Date,
@@ -208,7 +208,7 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
                 return;
             }
 
-            CircleEntry[] circleEntries = Array.Empty<CircleEntry>();
+            Data.Models.Circle[] circleEntries = Array.Empty<Data.Models.Circle>();
 
             try
             {
@@ -226,13 +226,13 @@ namespace TNEB.Shutdown.Notifier.Web.Jobs
             {
                 ICircle circle = circles[i];
 
-                CircleEntry? circleEntry = circleEntries.FirstOrDefault(c => c.Value == circle.Value);
+                Data.Models.Circle? circleEntry = circleEntries.FirstOrDefault(c => c.Value == circle.Value);
 
                 if (circleEntry == null)
                 {
                     logger.LogDebug($"[{i + 1}/{circles.Length}] Adding circle {circle.Name} ({circle.Value})");
 
-                    circleEntry = new CircleEntry
+                    circleEntry = new Data.Models.Circle
                     {
                         Id = Guid.NewGuid(),
                         Name = circle.Name,

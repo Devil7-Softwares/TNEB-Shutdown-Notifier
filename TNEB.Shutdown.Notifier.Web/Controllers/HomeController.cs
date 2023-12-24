@@ -20,7 +20,7 @@ namespace TNEB.Shutdown.Notifier.Web.Controllers
 
         public IActionResult Index()
         {
-            CircleEntry[] circles = _dbContext.Circles.OrderBy(c => c.Name).ToArray();
+            Circle[] circles = _dbContext.Circles.OrderBy(c => c.Name).ToArray();
 
             return View(new HomeViewModel(circles));
         }
@@ -33,14 +33,14 @@ namespace TNEB.Shutdown.Notifier.Web.Controllers
 
         public IActionResult Schedule(Guid circleId, int pageNumber = 1, int pageSize = 20, string q = "")
         {
-            CircleEntry? circle = _dbContext.Circles.Find(circleId);
+            Circle? circle = _dbContext.Circles.Find(circleId);
 
             if (circle == null)
             {
                 return RedirectToAction("Index");
             }
 
-            ScheduleEntry[] scheduleEntries = _dbContext.Schedules
+            Schedule[] scheduleEntries = _dbContext.Schedules
                 .Include(s => s.Location)
                 .Where(s =>
                     string.IsNullOrEmpty(q) ?

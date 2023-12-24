@@ -10,6 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AppAny.Quartz.EntityFrameworkCore.Migrations.SqlServer" Version="0.4.0" />
 		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore" Version="3.21.0" />
 		<PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.21.0" />
 		<PackageReference Include="JavaScriptEngineSwitcher.Extensions.MsDependencyInjection" Version="3.21.0" />
@@ -31,7 +32,7 @@
 		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x86" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x86" />
 
 		<!-- Packages for Windows x64 -->
-		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x64"/>
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x64" />
 
 		<!-- Packages for Windows ARM -->
 		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-arm" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == arm" />
@@ -48,6 +49,10 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\TNEB.Shutdown.Scrapper\TNEB.Shutdown.Scrapper.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\Migrations\" />
 	</ItemGroup>
 
 </Project>

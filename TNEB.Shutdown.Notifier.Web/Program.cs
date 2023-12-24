@@ -33,6 +33,11 @@ namespace TNEB.Shutdown.Notifier.Web
                 }
             });
 
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             builder.Services.AddQuartz(q =>
             {
                 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -52,11 +57,6 @@ namespace TNEB.Shutdown.Notifier.Web
             builder.Services.AddQuartzHostedService(options =>
             {
                 options.WaitForJobsToComplete = true;
-            });
-
-            builder.Services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             var app = builder.Build();

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AppAny.Quartz.EntityFrameworkCore.Migrations;
+using AppAny.Quartz.EntityFrameworkCore.Migrations.SqlServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TNEB.Shutdown.Notifier.Web.Data.Models;
 
@@ -20,6 +22,8 @@ namespace TNEB.Shutdown.Notifier.Web.Data
             scheduleEntryBuilder.Property(e => e.Date).HasConversion(Converters.DateTimeOffsetToUnix);
             scheduleEntryBuilder.Property(e => e.From).HasConversion(Converters.DateTimeOffsetToUnix);
             scheduleEntryBuilder.Property(e => e.To).HasConversion(Converters.DateTimeOffsetToUnix);
+
+            modelBuilder.AddQuartz(builder => builder.UseSqlServer());
         }
 
         /// <summary>

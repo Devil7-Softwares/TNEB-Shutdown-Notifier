@@ -1,0 +1,49 @@
+﻿form.view-schedule {
+    display: contents;
+
+    > table {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        > tbody, > thead, > tfoot {
+            display: flex;
+            flex-direction: column;
+
+            > tr {
+                display: flex;
+                flex-direction: row;
+
+                > th, > td {
+                    flex: 1 1 1px;
+                    overflow: hidden;
+                    white-space: nowrap;
+
+                    &:nth-child(1) {
+                        flex: unset;
+                        width: 10em;
+                    }
+
+                    &:nth-child(2), &:nth-child(3) {
+                        flex: unset;
+                        width: 7em;
+                    }
+
+                    &:last-child {
+                        flex: 2 2 1px;
+                    }
+
+                    &[colspan='7'] {
+                        flex: 1;
+                    }
+                }
+            }
+        }
+
+        > tbody {
+            flex: 1 1 1px;
+            overflow: auto;
+            position: relative;
+        }
+    }
+}

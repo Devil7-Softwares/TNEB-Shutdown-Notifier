@@ -5,16 +5,28 @@
 
 <div>
     <h1>Welcome</h1>
-    <form method="post">
-        <label for="circle">Circle</label>
-        <select id="circle" name="circleId">
-            @foreach (var circle in Model.Circles)
-            {
-                <option value="@circle.Id">@circle.Name</option>
-            }
-        </select>
-        <button type="submit">Submit</button>
 
-        @Html.AntiForgeryToken()
-    </form>
+    <div class="ui container centered middle">
+    <div class="ui raised segment">
+        <form class="ui form" method="post">
+            <div class="field">
+                <label>Circle</label>
+                <div class="ui fluid search selection dropdown">
+                    <input type="hidden" name="circleId">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Select Circle</div>
+                    <div class="menu">
+                        @foreach (var circle in Model.Circles)
+                        {
+                            <div class="item" data-value="@circle.Id">@circle.Name</div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <button class="ui button primary" type="submit">Submit</button>
+
+            @Html.AntiForgeryToken()
+        </form>
+        </div>
+    </div>
 </div>

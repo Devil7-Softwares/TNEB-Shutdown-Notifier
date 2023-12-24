@@ -1,3 +1,4 @@
+using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 using TNEB.Shutdown.Notifier.Web.Data;
@@ -14,6 +15,11 @@ namespace TNEB.Shutdown.Notifier.Web
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddJsEngineSwitcher(options =>
+                options.DefaultEngineName = ChakraCoreJsEngine.EngineName
+            )
+                .AddChakraCore();
 
             builder.Services.AddQuartz(q =>
             {

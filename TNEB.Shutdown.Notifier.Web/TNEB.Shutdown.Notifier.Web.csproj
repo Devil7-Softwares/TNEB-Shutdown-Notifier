@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore" Version="3.21.0" />
+		<PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.21.0" />
+		<PackageReference Include="JavaScriptEngineSwitcher.Extensions.MsDependencyInjection" Version="3.21.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -21,6 +24,24 @@
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.0" />
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.8.0" />
+
+		<!-- Packages for Windows x86 -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x86" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x86" />
+
+		<!-- Packages for Windows x64 -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-x64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x64"/>
+
+		<!-- Packages for Windows ARM -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-arm" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == arm" />
+
+		<!-- Packages for Windows ARM64 -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.win-arm64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Windows')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == arm64" />
+
+		<!-- Packages for Linux x64 -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.linux-x64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('Linux')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x64" />
+
+		<!-- Packages for macOS x64 -->
+		<PackageReference Include="JavaScriptEngineSwitcher.ChakraCore.Native.osx-x64" Version="3.21.0" Condition="$([MSBuild]::IsOSPlatform('OSX')) And $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == x64" />
   </ItemGroup>
 
   <ItemGroup>

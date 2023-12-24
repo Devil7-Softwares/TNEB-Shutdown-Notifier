@@ -69,6 +69,13 @@ namespace TNEB.Shutdown.Notifier.Web
                 app.UseHsts();
             }
 
+            if (app.Configuration.GetValue<bool>("RunMigrations"))
+            {
+                IServiceScope scope = app.Services.CreateScope();
+                AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+            }
+
             app.UseHttpsRedirection();
 
             app.UseWebOptimizer();
